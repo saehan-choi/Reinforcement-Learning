@@ -109,11 +109,11 @@ if __name__ == '__main__':
     EPS_END = 0.05
     EPS_DECAY = 1000
     TAU = 0.005
-    LR = 1e-4
+    LR = 1e-3
 
     n_actions = len(env.action_space)
     steps_done = 0
-    num_episodes = 100000
+    num_episodes = 1000000
 
     # if gpu is to be used
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -136,7 +136,7 @@ if __name__ == '__main__':
         state = env.reset()
         # state -> [left_pad_y, right_pad_y, ball_x, ball_y, ball_dx, ball_dy]
         state = torch.tensor(state, dtype=torch.float32, device=device).unsqueeze(0)
-        print('오잉')
+        
         for t in count():
             action = select_action(state)
 
@@ -162,10 +162,14 @@ if __name__ == '__main__':
                 target_net_state_dict[key] = policy_net_state_dict[key]*TAU + target_net_state_dict[key]*(1-TAU)
             target_net.load_state_dict(target_net_state_dict)
 
-
             if done:
                 break
 
+        f = open('reward.txt', 'a')
+        f.write(str(reward.item())+'\n')
+        f.close()
+        
+        print(f'reward : {reward.item()}')
             # if done:
             #     episode_durations.append(t + 1)
                 

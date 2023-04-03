@@ -37,8 +37,8 @@ class PongEnv:
         ball.color("white")
         ball.penup()
         ball.goto(0, 0)
-        ball.dx = 0.9
-        ball.dy = -0.9
+        ball.dx = 4
+        ball.dy = -4
         return ball
 
     def create_scoreboard(self):
@@ -81,6 +81,7 @@ class PongEnv:
         # Check if the new y-coordinate is within the allowed range
         if min_y <= new_y <= max_y:
             pad.sety(new_y)
+        
 
     def update(self):
         self.win.update()
@@ -178,23 +179,29 @@ class PongEnv:
         reward = 0
 
         # 공이 왼쪽 플레이어의 필드로 이동할 경우
-        if self.ball.dx < 0:
-            reward += 0.1
+        if -240 < self.ball.dx < 0:
+            reward += 0.000000001
 
         # 공이 오른쪽 플레이어의 필드로 이동할 경우
-        if self.ball.dx > 0:
-            reward += 0.1
+        if 0 < self.ball.dx < 240:
+            reward += 0.000000001
+        
+        # 패들이 공에 가까워질수록 보상 증가 (공에 빠르게 반응하도록 유도)
+        if abs(self.ball.ycor() - self.right_pad.ycor()) > 0:
+            reward += (1 / abs(self.ball.ycor() - self.right_pad.ycor())) * 0.3
+        if abs(self.ball.ycor() - self.left_pad.ycor()) > 0:
+            reward += (1 / abs(self.ball.ycor() - self.left_pad.ycor())) * 0.3
 
         # 왼쪽 패들이 공을 받아냈을 경우
-        if self.ball.xcor() < -240 and self.ball.ycor() < self.left_pad.ycor() + 10 and self.ball.ycor() > self.left_pad.ycor() - 10:
-            reward += 1000
+        if self.left_pad.ycor()-10 < self.ball.ycor() < self.left_pad.ycor()+10:
+            reward += 1
 
         # 오른쪽 패들이 공을 받아냈을 경우
-        if self.ball.xcor() > 240 and self.ball.ycor() < self.right_pad.ycor() + 10 and self.ball.ycor() > self.right_pad.ycor() - 10:
-            reward += 1000
+        if self.right_pad.ycor()-10 < self.ball.ycor() < self.right_pad.ycor()+10:
+            reward += 1
         
         if self.ball.xcor() < -290 or self.ball.xcor() > 290:
-            reward = -1000
+            reward -= 5
         
         return reward
 
@@ -202,8 +209,8 @@ class PongEnv:
         self.left_pad.goto(-250, 0)
         self.right_pad.goto(250, 0)
         self.ball.goto(0, 0)
-        self.ball.dx = 0.9
-        self.ball.dy = -0.9
+        self.ball.dx = 4
+        self.ball.dy = -4
         self.left_score = 0
         self.right_score = 0
         self.score.clear()
