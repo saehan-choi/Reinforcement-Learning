@@ -178,13 +178,13 @@ class PongEnv:
     def calculate_reward(self):
         reward = 0
 
-        # 공이 왼쪽 플레이어의 필드로 이동할 경우
-        if -240 < self.ball.dx < 0:
-            reward += 0.000000001
+        # # 공이 왼쪽 플레이어의 필드로 이동할 경우
+        # if -240 < self.ball.dx < 0:
+        #     reward += 0.000000001
 
-        # 공이 오른쪽 플레이어의 필드로 이동할 경우
-        if 0 < self.ball.dx < 240:
-            reward += 0.000000001
+        # # 공이 오른쪽 플레이어의 필드로 이동할 경우
+        # if 0 < self.ball.dx < 240:
+        #     reward += 0.000000001
         
         # 패들이 공에 가까워질수록 보상 증가 (공에 빠르게 반응하도록 유도)
         # if abs(self.ball.ycor() - self.right_pad.ycor()) > 0:
@@ -193,14 +193,23 @@ class PongEnv:
         #     reward += (1 / abs(self.ball.ycor() - self.left_pad.ycor())) * 0.3
         
         # 왼쪽 패들이 공을 받아냈을 경우
-        if abs(self.left_pad.xcor()-self.ball.xcor()) < 50 and self.left_pad.ycor()-10 < self.ball.ycor() < self.left_pad.ycor()+10:
+        
+        # print(f'right:{self.right_pad.ycor()}')
+        # print(f'ball:{self.ball.ycor()}')
+        # print('\n\n')
+        
+        # if abs(self.right_pad.xcor()-self.ball.xcor())<=2:
+        #     print('what?')
+        
+            
+        if abs(self.left_pad.xcor()-self.ball.xcor()) <= 2 and abs(self.ball.ycor()-self.left_pad.ycor()) <= 50:
             reward += 1
 
         # 오른쪽 패들이 공을 받아냈을 경우
-        if abs(self.right_pad.xcor()-self.ball.xcor()) < 50 and self.right_pad.ycor()-10 < self.ball.ycor() < self.right_pad.ycor()+10:
+        if abs(self.right_pad.xcor()-self.ball.xcor()) <= 2 and abs(self.ball.ycor()-self.right_pad.ycor()) <= 50:
             reward += 1
         
-        if self.ball.xcor() < -290 or self.ball.xcor() > 290:
+        if abs(self.ball.xcor()) <= 290:
             reward -= 5
         
         return reward
