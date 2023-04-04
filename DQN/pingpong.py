@@ -187,17 +187,17 @@ class PongEnv:
             reward += 0.000000001
         
         # 패들이 공에 가까워질수록 보상 증가 (공에 빠르게 반응하도록 유도)
-        if abs(self.ball.ycor() - self.right_pad.ycor()) > 0:
-            reward += (1 / abs(self.ball.ycor() - self.right_pad.ycor())) * 0.3
-        if abs(self.ball.ycor() - self.left_pad.ycor()) > 0:
-            reward += (1 / abs(self.ball.ycor() - self.left_pad.ycor())) * 0.3
-
+        # if abs(self.ball.ycor() - self.right_pad.ycor()) > 0:
+        #     reward += (1 / abs(self.ball.ycor() - self.right_pad.ycor())) * 0.3
+        # if abs(self.ball.ycor() - self.left_pad.ycor()) > 0:
+        #     reward += (1 / abs(self.ball.ycor() - self.left_pad.ycor())) * 0.3
+        
         # 왼쪽 패들이 공을 받아냈을 경우
-        if self.left_pad.ycor()-10 < self.ball.ycor() < self.left_pad.ycor()+10:
+        if abs(self.left_pad.xcor()-self.ball.xcor()) < 50 and self.left_pad.ycor()-10 < self.ball.ycor() < self.left_pad.ycor()+10:
             reward += 1
 
         # 오른쪽 패들이 공을 받아냈을 경우
-        if self.right_pad.ycor()-10 < self.ball.ycor() < self.right_pad.ycor()+10:
+        if abs(self.right_pad.xcor()-self.ball.xcor()) < 50 and self.right_pad.ycor()-10 < self.ball.ycor() < self.right_pad.ycor()+10:
             reward += 1
         
         if self.ball.xcor() < -290 or self.ball.xcor() > 290:
